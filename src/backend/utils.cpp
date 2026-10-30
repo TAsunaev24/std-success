@@ -33,20 +33,22 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 
 enum generationDirection getDirection()
 {
-	return random() % 4;
+	return (enum generationDirection)(getRandom() % 4);
 }
 
 // first run: foundWay = false, possible options: continue, split
 // second run: foundWay = true, possible options: continue, stop, split		FOR NOW
 enum generationAction getAction(bool foundWay)
 {
-	return random() % (2 + foundWay);
+	return (enum generationAction)(getRandom() % (2 + foundWay));
 }
 
-unsigned int random()
+unsigned int getRandom()
 {
+	static unsigned int mask = 0;
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	srand(ts.nsec ^ ts.sec);
-	return rand();
+	srand(ts.tv_nsec ^ ts.tv_sec);
+	mask ^= (ts.tv_nsec + ts.tv_sec);
+	return rand()+mask;
 }

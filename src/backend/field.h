@@ -35,10 +35,12 @@ private:
 	field _f = NULL;
 	void _generateField();
 	bool _checkCell(coordinate cell, coordinate prevCell);
+	bool _checkOOB(coordinate cell);
+	void _dumpField(); // DEBUG
 public:
 	enum cellType getCell(coordinate loc);
 	enum cellType getCell(int y, int x);
-	void setCell(coordinate loc, enum cellType val);
+	bool setCell(coordinate loc, enum cellType val);
 	Field(int height, int width);
 	~Field();
 };
