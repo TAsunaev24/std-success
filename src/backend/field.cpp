@@ -1,7 +1,6 @@
 // All bool functions return 0 (false) on success and 1 (true) on error
 
 #include <vector>
-#include <iostream>
 #include <algorithm>
 #include "field.h"
 #include "utils.h"
@@ -19,19 +18,9 @@ bool operator!=(const coordinate& a, const coordinate& b)
 }
 
 // check if has got into position which has no way to continue
-bool Field::_hitEnd(coordinate loc)
+bool Field::_hitEnd(coordinate cell)
 {
-	return (_checkCell({ loc.y - 1, loc.x }, loc) && _checkCell({ loc.y, loc.x - 1}, loc) && _checkCell({ loc.y, loc.x + 1}, loc) && _checkCell({ loc.y + 1, loc.x }, loc));
-}
-
-void Field::_dumpField()
-{
-	for (int i = 0; i<_h; ++i)
-	{
-		for (int j = 0; j<_w; ++j)
-			cout << (_f[i][j]==WALL?'O':' ');
-		cout << endl;
-	}
+	return (_checkCell(applyDirection(cell, UP), cell) && _checkCell(applyDirection(cell, LEFT), cell) && _checkCell(applyDirection(cell, RIGHT), cell) && _checkCell(applyDirection(cell, DOWN), cell));
 }
 
 void Field::_generateField()
@@ -88,27 +77,27 @@ bool Field::_checkOOB(coordinate cell)
 // returns true if the call cant be used
 bool Field::_checkCell(coordinate cell, coordinate prevCell)
 {
-	if ((!_checkOOB({ cell.y - 1, cell.x })) && (((coordinate){ cell.y - 1, cell.x } != prevCell) && (getCell({ cell.y - 1, cell.x }) == EMPTY))) return true; // UP
-	if ((!_checkOOB({ cell.y, cell.x - 1 })) && (((coordinate){ cell.y, cell.x - 1 } != prevCell) && (getCell({ cell.y, cell.x - 1 }) == EMPTY))) return true; // LEFT
-	if ((!_checkOOB({ cell.y, cell.x + 1 })) && (((coordinate){ cell.y, cell.x + 1 } != prevCell) && (getCell({ cell.y, cell.x + 1 }) == EMPTY))) return true; // RIGHT
-	if ((!_checkOOB({ cell.y + 1, cell.x })) && (((coordinate){ cell.y + 1, cell.x } != prevCell) && (getCell({ cell.y + 1, cell.x }) == EMPTY))) return true; // DOWN
+	if ((!_checkOOB(applyDirection(cell, UP))) && ((applyDirection(cell, UP) != prevCell) && (getCell(applyDirection(cell, UP)) == EMPTY))) return true; // UP
+	if ((!_checkOOB(applyDirection(cell, LEFT))) && ((applyDirection(cell, LEFT) != prevCell) && (getCell(applyDirection(cell, LEFT)) == EMPTY))) return true; // LEFT
+	if ((!_checkOOB(applyDirection(cell, RIGHT))) && ((applyDirection(cell, RIGHT) != prevCell) && (getCell(applyDirection(cell, RIGHT)) == EMPTY))) return true; // RIGHT
+	if ((!_checkOOB(applyDirection(cell, DOWN))) && ((applyDirection(cell, DOWN) != prevCell) && (getCell(applyDirection(cell, DOWN)) == EMPTY))) return true; // DOWN
 	return _checkOOB(cell) || (getCell(cell)==EMPTY);
 }
 
 vector<enum generationDirection> Field::_getPossibleDirections(coordinate cell)
 {
 	vector<enum generationDirection> ret;
-	if (!_checkCell({ cell.y - 1, cell.x }, cell)) ret.push_back(UP);
-	if (!_checkCell({ cell.y, cell.x - 1 }, cell)) ret.push_back(LEFT);
-	if (!_checkCell({ cell.y, cell.x + 1 }, cell)) ret.push_back(RIGHT);
-	if (!_checkCell({ cell.y + 1, cell.x }, cell)) ret.push_back(DOWN);
+	if (!_checkCell(applyDirection(cell, UP), cell)) ret.push_back(UP);
+	if (!_checkCell(applyDirection(cell, LEFT), cell)) ret.push_back(LEFT);
+	if (!_checkCell(applyDirection(cell, RIGHT), cell)) ret.push_back(RIGHT);
+	if (!_checkCell(applyDirection(cell, DOWN), cell)) ret.push_back(DOWN);
 	return ret;
 }
 
-enum cellType Field::getCell(coordinate loc)
+enum cellType Field::getCell(coordinate cell)
 {
-	if (_checkOOB(loc)) return WALL;
-	return _f[loc.y][loc.x];
+	if (_checkOOB(cell)) return WALL;
+	return _f[cell.y][cell.x];
 }
 
 enum cellType Field::getCell(int y, int x)
@@ -116,10 +105,10 @@ enum cellType Field::getCell(int y, int x)
 	return getCell({y, x});
 }
 
-bool Field::setCell(coordinate loc, enum cellType val)
+bool Field::setCell(coordinate cell, enum cellType val)
 {
-	if (_checkOOB(loc)) return 1;
-	_f[loc.y][loc.x] = val;
+	if (_checkOOB(cell)) return 1;
+	_f[cell.y][cell.x] = val;
 	return 0;
 }
 

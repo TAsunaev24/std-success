@@ -1,7 +1,6 @@
 #include <iostream>
 #include "../backend/field.h"
-
-#define SIZE 30
+#include "shared.h"
 
 using namespace std;
 

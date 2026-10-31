@@ -37,29 +37,46 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 enum generationDirection getDirection(coordinate loc, coordinate end)
 {
 	vector<enum generationDirection> possibleDirections;
-	if (loc==end) // TODO? add some bias for moving away from the center
+	if (loc==end)
 	{
 		for (int i = 0; i<4; ++i)
 			possibleDirections.push_back((enum generationDirection)i);
+
+		// increase chance for moving away from the center of the screen
+		if (loc.y<end.y/2)
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(UP);
+		else
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(DOWN);
+
+		if (loc.x<end.x/2)
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(LEFT);
+		else 
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(RIGHT);
 	}
 	else
 	{
 		if (loc.x<end.x)
 		{
 			possibleDirections.push_back(RIGHT);
-			if (loc.x<end.x/2)
+			if (loc.x<end.x-end.x/3)
 			{
 				possibleDirections.push_back(UP);
-				possibleDirections.push_back(RIGHT);
+				for (int i = 0; i<LINEARITY; ++i)
+					possibleDirections.push_back(RIGHT);
 			}
 		}
 		if (loc.y<end.y)
 		{
 			possibleDirections.push_back(DOWN);
-			if (loc.y<end.y/2)
+			if (loc.y<end.y-end.y/3)
 			{
 				possibleDirections.push_back(LEFT);
-				possibleDirections.push_back(DOWN);
+				for (int i = 0; i<LINEARITY; ++i)
+					possibleDirections.push_back(DOWN);
 			}
 		}
 	}
@@ -70,7 +87,7 @@ enum generationDirection getDirection(coordinate loc, coordinate end)
 // current ratio is 2:1 fo continue:split
 enum generationAction getAction()
 {
-	return ((getRandom()%3==0) ? SPLIT : CONTINUE);
+	return ((getRandom()%3!=0) ? SPLIT : CONTINUE);
 }
 
 unsigned int getRandom()
