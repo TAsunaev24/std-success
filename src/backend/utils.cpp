@@ -1,7 +1,10 @@
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 #include "field.h"
 #include "utils.h"
+
+using namespace std;
 
 coordinate applyDirection(coordinate current, enum generationDirection direction)
 {
@@ -31,22 +34,68 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 	return current;
 }
 
-enum generationDirection getDirection()
+enum generationDirection getDirection(coordinate loc, coordinate end)
 {
-	return random() % 4;
+	vector<enum generationDirection> possibleDirections;
+	if (loc==end)
+	{
+		for (int i = 0; i<4; ++i)
+			possibleDirections.push_back((enum generationDirection)i);
+
+		// increase chance for moving away from the center of the screen
+		if (loc.y<end.y/2)
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(UP);
+		else
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(DOWN);
+
+		if (loc.x<end.x/2)
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(LEFT);
+		else 
+			for (int i = 0; i<LINEARITY; ++i)
+				possibleDirections.push_back(RIGHT);
+	}
+	else
+	{
+		if (loc.x<end.x)
+		{
+			possibleDirections.push_back(RIGHT);
+			if (loc.x<end.x-end.x/3)
+			{
+				possibleDirections.push_back(UP);
+				for (int i = 0; i<LINEARITY; ++i)
+					possibleDirections.push_back(RIGHT);
+			}
+		}
+		if (loc.y<end.y)
+		{
+			possibleDirections.push_back(DOWN);
+			if (loc.y<end.y-end.y/3)
+			{
+				possibleDirections.push_back(LEFT);
+				for (int i = 0; i<LINEARITY; ++i)
+					possibleDirections.push_back(DOWN);
+			}
+		}
+	}
+
+	return possibleDirections[getRandom()%possibleDirections.size()];
 }
 
-// first run: foundWay = false, possible options: continue, split
-// second run: foundWay = true, possible options: continue, stop, split		FOR NOW
-enum generationAction getAction(bool foundWay)
+// current ratio is 2:1 fo continue:split
+enum generationAction getAction()
 {
-	return random() % (2 + foundWay);
+	return ((getRandom()%3!=0) ? SPLIT : CONTINUE);
 }
 
-unsigned int random()
+unsigned int getRandom()
 {
+	static unsigned int mask = 0;
 	struct timespec ts;
 	clock_gettime(CLOCK_REALTIME, &ts);
-	srand(ts.nsec ^ ts.sec);
-	return rand();
+	srand(ts.tv_nsec ^ ts.tv_sec);
+	mask ^= (ts.tv_nsec + ts.tv_sec);
+	return rand()+mask;
 }
