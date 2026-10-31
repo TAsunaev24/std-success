@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../backend/field.h"
 
-#define SIZE 50
+#define SIZE 30
 
 using namespace std;
 

@@ -1,6 +1,10 @@
 #ifndef FIELD_H_
 #define FIELD_H_
 
+#include <vector>
+
+using namespace std;
+
 typedef struct {
 	int y;
 	int x;
@@ -39,6 +43,7 @@ private:
 	bool _checkOOB(coordinate cell);
 	void _dumpField(); // DEBUG
 	bool _hitEnd(coordinate loc);
+	vector<enum generationDirection> _getPossibleDirections(coordinate cell);
 public:
 	enum cellType getCell(coordinate loc);
 	enum cellType getCell(int y, int x);
