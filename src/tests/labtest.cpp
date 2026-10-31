@@ -1,15 +1,17 @@
 #include <iostream>
 #include "../backend/field.h"
 
+#define SIZE 50
+
 using namespace std;
 
 int main()
 {
-	Field field = Field(15, 15);
-	for (int i = 0; i<15; ++i)
+	Field field = Field(SIZE, SIZE);
+	for (int i = 0; i<SIZE; ++i)
 	{
-		for (int j = 0; j<15; ++j)
-			cout << (field.getCell(i, j)==WALL?'W':' ');
+		for (int j = 0; j<SIZE; ++j)
+			cout << (field.getCell(i, j)==WALL?'O':' ');
 
 		cout << endl;
 	}

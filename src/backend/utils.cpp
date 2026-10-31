@@ -1,7 +1,10 @@
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 #include "field.h"
 #include "utils.h"
+
+using namespace std;
 
 coordinate applyDirection(coordinate current, enum generationDirection direction)
 {
@@ -31,16 +34,43 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 	return current;
 }
 
-enum generationDirection getDirection()
+enum generationDirection getDirection(coordinate loc, coordinate end)
 {
-	return (enum generationDirection)(getRandom() % 4);
+	vector<enum generationDirection> possibleDirections;
+	if (loc==end) // TODO? add some bias for moving away from the center
+	{
+		for (int i = 0; i<4; ++i)
+			possibleDirections.push_back((enum generationDirection)i);
+	}
+	else
+	{
+		if (loc.x<end.x)
+		{
+			possibleDirections.push_back(RIGHT);
+			if (loc.x<end.x/2)
+			{
+				possibleDirections.push_back(UP);
+				possibleDirections.push_back(RIGHT);
+			}
+		}
+		if (loc.y<end.y)
+		{
+			possibleDirections.push_back(DOWN);
+			if (loc.y<end.y/2)
+			{
+				possibleDirections.push_back(LEFT);
+				possibleDirections.push_back(DOWN);
+			}
+		}
+	}
+
+	return possibleDirections[getRandom()%possibleDirections.size()];
 }
 
-// first run: foundWay = false, possible options: continue, split
-// second run: foundWay = true, possible options: continue, stop, split		FOR NOW
-enum generationAction getAction(bool foundWay)
+// current ratio is 2:1 fo continue:split
+enum generationAction getAction()
 {
-	return (enum generationAction)(getRandom() % (2 + foundWay));
+	return ((getRandom()%3==0) ? SPLIT : CONTINUE);
 }
 
 unsigned int getRandom()

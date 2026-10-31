@@ -6,9 +6,11 @@ typedef struct {
 	int x;
 } coordinate;
 
+bool operator==(const coordinate&, const coordinate&);
+bool operator!=(const coordinate&, const coordinate&);
+
 enum cellType {
 	WALL,
-	// COIN,  ?
 	EMPTY
 };
 
@@ -21,8 +23,7 @@ enum generationDirection {
 
 enum generationAction {
 	CONTINUE,
-	SPLIT,
-	STOP
+	SPLIT
 };
 
 typedef enum cellType** field;
@@ -37,6 +38,7 @@ private:
 	bool _checkCell(coordinate cell, coordinate prevCell);
 	bool _checkOOB(coordinate cell);
 	void _dumpField(); // DEBUG
+	bool _hitEnd(coordinate loc);
 public:
 	enum cellType getCell(coordinate loc);
 	enum cellType getCell(int y, int x);
