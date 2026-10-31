@@ -1,15 +1,28 @@
 #include <iostream>
+#include <cstdlib>
 #include "../backend/field.h"
-#include "shared.h"
 
 using namespace std;
 
-int main()
+int main(int argc, char **argv)
 {
-	Field field = Field(SIZE, SIZE);
-	for (int i = 0; i<SIZE; ++i)
+	if (argc != 2)
 	{
-		for (int j = 0; j<SIZE; ++j)
+		cout << "Usage: labtest size\n";
+		return 1;
+	}
+
+	int size = atoi(argv[1]);
+	if (!size)
+	{
+		cout << "Invalid size\n";
+		return 1;
+	}
+
+	Field field = Field(size, size);
+	for (int i = 0; i<size; ++i)
+	{
+		for (int j = 0; j<size; ++j)
 			cout << (field.getCell(i, j)==WALL?'O':' ');
 
 		cout << endl;

@@ -48,24 +48,23 @@ void Field::_generateField()
 		start = exchange;
 	}
 
-	enum generationAction action;
 	// handle queue splits
-	// TODO? add splits to splits
 	while (queue.size())
 	{
-		start = *(queue.end()-1);
-		queue.pop_back();
+		start = *(queue.begin());
+		queue.erase(queue.begin());
 		while (!_hitEnd(start))
 		{
-			/*if (_getPossibleDirections(start).size()==1)
-				exchange = applyDirection(start, _getPossibleDirections(start)[0]);
-			else*/
-				exchange = applyDirection(start, getDirection(start, start));
+			exchange = applyDirection(start, getDirection(start, start));
 			if ((getCell(exchange) != WALL) || _checkCell(exchange, start)) continue;
+			if (getAction() == SPLIT) queue.push_back(start);
 			setCell(start, EMPTY);
 			start = exchange;
 		}
 	}
+	
+	if ((getCell(_h-2, _w-1) == EMPTY) || (getCell(_h-1, _w-2) == EMPTY))
+		setCell({_h-1, _w-1}, EMPTY);
 }
 
 // return true if oob
@@ -77,6 +76,7 @@ bool Field::_checkOOB(coordinate cell)
 // returns true if the call cant be used
 bool Field::_checkCell(coordinate cell, coordinate prevCell)
 {
+	// checks: if inside of the field, if not the same location as prevCell and if that location is empty
 	if ((!_checkOOB(applyDirection(cell, UP))) && ((applyDirection(cell, UP) != prevCell) && (getCell(applyDirection(cell, UP)) == EMPTY))) return true; // UP
 	if ((!_checkOOB(applyDirection(cell, LEFT))) && ((applyDirection(cell, LEFT) != prevCell) && (getCell(applyDirection(cell, LEFT)) == EMPTY))) return true; // LEFT
 	if ((!_checkOOB(applyDirection(cell, RIGHT))) && ((applyDirection(cell, RIGHT) != prevCell) && (getCell(applyDirection(cell, RIGHT)) == EMPTY))) return true; // RIGHT
