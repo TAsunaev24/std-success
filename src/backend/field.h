@@ -4,9 +4,9 @@
 #include <vector>
 
 // defines how random the search will be
-// bigger value represents less randomness but yields higher field generation success chance (see tests/pathtest.cpp)
-// the value of 0 yields around 50% success chance, 1 - ~90%, 2 - ~96% for 25x25 field
-#define LINEARITY 1
+// bigger value represents less randomness (straghter way to exit) but yields slightly higher field generation success chance (see pathtest from src/tests for benchmarks)
+// TODO? remove
+#define LINEARITY 0
 
 using namespace std;
 

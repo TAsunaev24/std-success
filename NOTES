@@ -1,1 +1,2 @@
-Algorithm performs best for sizes less than 40x40 (>80% success chance)
+The average success chance per 1000 runs should be higher than 90%
+The average wall/empty ratio per 1000 runs is best kept around 50%
