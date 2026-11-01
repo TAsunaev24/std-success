@@ -16,6 +16,8 @@ target_sources(labgen
 			src/backend/utils.h
 )
 
+add_subdirectory(raylib)
+
 add_executable(pathtest)
 target_sources(pathtest PRIVATE src/tests/pathtest.cpp)
 target_link_libraries(pathtest PRIVATE labgen)
