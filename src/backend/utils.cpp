@@ -94,7 +94,7 @@ enum generationAction getAction()
 unsigned int getRandom()
 {
 	static unsigned int mask = 0;
-	chrono::steady_clock::time_point dt = chrono::high_resolution_clock::now();
+	chrono::system_clock::time_point dt = chrono::high_resolution_clock::now();
 	srand(chrono::nanoseconds(dt.time_since_epoch()).count() ^ time(NULL));
 	mask ^= (chrono::nanoseconds(dt.time_since_epoch()).count() + time(NULL));
 	return rand()+mask;
