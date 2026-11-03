@@ -1,3 +1,4 @@
+#include <chrono>
 #include <ctime>
 #include <cstdlib>
 #include <vector>
@@ -93,9 +94,8 @@ enum generationAction getAction()
 unsigned int getRandom()
 {
 	static unsigned int mask = 0;
-	struct timespec ts;
-	clock_gettime(CLOCK_REALTIME, &ts);
-	srand(ts.tv_nsec ^ ts.tv_sec);
-	mask ^= (ts.tv_nsec + ts.tv_sec);
+	chrono::steady_clock::time_point dt = chrono::high_resolution_clock::now();
+	srand(chrono::nanoseconds(dt.time_since_epoch()).count() ^ time(NULL));
+	mask ^= (chrono::nanoseconds(dt.time_since_epoch()).count() + time(NULL));
 	return rand()+mask;
 }
