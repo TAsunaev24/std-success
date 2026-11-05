@@ -2,9 +2,7 @@
 #define APP_H_
 
 #include <array>
-#include <memory>
 
-#include "game.h"
 #include "ui.h"
 
 class App
@@ -20,35 +18,29 @@ private:
 		Menu,
 		SizeSelect,
 		Settings,
-		Credits,
-		Game
+		Credits
 	};
 
-	void update(float dt);
+	void update();
 	void draw();
 
 	void layoutMenu();
 	void layoutSizeSelect();
 	void layoutSettings();
 	void layoutCredits();
-	void layoutGame();
 
 	void updateMenu();
 	void updateSizeSelect();
 	void updateSettings();
 	void updateCredits();
-	void updateGame(float dt);
 
 	void drawMenu();
 	void drawSizeSelect();
 	void drawSettings();
 	void drawCredits();
-	void drawGame();
 	void drawFps();
 
 	void activateMenu(int index);
-	void startGame();
-	void goToMenu();
 	void toggleFullscreen();
 
 	Screen _screen = Screen::Menu;
@@ -77,12 +69,6 @@ private:
 
 	Rectangle _creditsPanel{0, 0, 0, 0};
 	ui::Button _creditsBack{"BACK"};
-
-	std::unique_ptr<MazeGame> _game;
-	ui::Button _gameMenu{"MENU"};
-	Rectangle _winPanel{0, 0, 0, 0};
-	ui::Button _winAgain{"PLAY AGAIN", true};
-	ui::Button _winMenu{"MAIN MENU"};
 };
 
 #endif

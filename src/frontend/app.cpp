@@ -1,7 +1,6 @@
 #include "app.h"
 
 #include <algorithm>
-#include <cmath>
 #include <cstdio>
 #include <string>
 
@@ -13,19 +12,6 @@ constexpr int MaxMazeSize = 50;
 bool IsEnterPressed()
 {
 	return IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER);
-}
-
-std::string FormatTime(float seconds)
-{
-	if (seconds < 0.0f) seconds = 0.0f;
-	const int tenths = static_cast<int>(seconds * 10.0f + 0.5f);
-	const int minutes = tenths / 600;
-	const int wholeSeconds = (tenths / 10) % 60;
-	const int decimal = tenths % 10;
-
-	char buffer[32];
-	std::snprintf(buffer, sizeof(buffer), "%02d:%02d.%d", minutes, wholeSeconds, decimal);
-	return buffer;
 }
 
 void SetPointerCursor(bool pointing)
@@ -64,14 +50,13 @@ int App::run()
 {
 	while (!_closeRequested && !WindowShouldClose())
 	{
-		const float dt = GetFrameTime();
-		update(dt);
+		update();
 		draw();
 	}
 	return 0;
 }
 
-void App::update(float dt)
+void App::update()
 {
 	if (IsKeyPressed(KEY_F11))
 		toggleFullscreen();
@@ -89,9 +74,6 @@ void App::update(float dt)
 			break;
 		case Screen::Credits:
 			updateCredits();
-			break;
-		case Screen::Game:
-			updateGame(dt);
 			break;
 	}
 }
@@ -114,9 +96,6 @@ void App::draw()
 			break;
 		case Screen::Credits:
 			drawCredits();
-			break;
-		case Screen::Game:
-			drawGame();
 			break;
 	}
 
@@ -211,23 +190,6 @@ void App::layoutCredits()
 		220.0f, 54.0f};
 }
 
-void App::layoutGame()
-{
-	const int width = GetScreenWidth();
-	const int height = GetScreenHeight();
-
-	_gameMenu.rect = {24.0f, 18.0f, 104.0f, 40.0f};
-
-	const float panelWidth = std::clamp(width * 0.52f, 440.0f, 580.0f);
-	constexpr float panelHeight = 330.0f;
-	_winPanel = {(width - panelWidth) * 0.5f, (height - panelHeight) * 0.5f, panelWidth, panelHeight};
-
-	const float buttonWidth = (panelWidth - 72.0f) * 0.5f;
-	const float buttonY = _winPanel.y + panelHeight - 88.0f;
-	_winAgain.rect = {_winPanel.x + 24.0f, buttonY, buttonWidth, 56.0f};
-	_winMenu.rect = {_winPanel.x + panelWidth - 24.0f - buttonWidth, buttonY, buttonWidth, 56.0f};
-}
-
 void App::activateMenu(int index)
 {
 	switch (index)
@@ -245,18 +207,6 @@ void App::activateMenu(int index)
 			_closeRequested = true;
 			break;
 	}
-}
-
-void App::startGame()
-{
-	_game = std::make_unique<MazeGame>(_mazeSize);
-	_screen = Screen::Game;
-}
-
-void App::goToMenu()
-{
-	_game.reset();
-	_screen = Screen::Menu;
 }
 
 void App::toggleFullscreen()
@@ -348,10 +298,11 @@ void App::updateSizeSelect()
 			_mazeSize = (i + 1) * 10;
 	}
 
+	// The game screen was intentionally removed. The size dialog stays intact
+	// as the place where a future game implementation will be launched.
 	if (_sizeStart.clicked() || IsEnterPressed())
 	{
 		SetPointerCursor(handCursor);
-		startGame();
 		return;
 	}
 
@@ -409,68 +360,6 @@ void App::updateCredits()
 	}
 
 	SetPointerCursor(_creditsBack.hovered);
-}
-
-void App::updateGame(float dt)
-{
-	layoutGame();
-	const Vector2 mouse = GetMousePosition();
-
-	if (!_game)
-	{
-		_screen = Screen::Menu;
-		return;
-	}
-
-	_gameMenu.update(mouse);
-	bool handCursor = _gameMenu.hovered;
-
-	if (_game->won())
-	{
-		_winAgain.update(mouse);
-		_winMenu.update(mouse);
-		handCursor = handCursor || _winAgain.hovered || _winMenu.hovered;
-	}
-
-	if (_gameMenu.clicked())
-	{
-		SetPointerCursor(handCursor);
-		goToMenu();
-		return;
-	}
-
-	if (IsKeyPressed(KEY_ESCAPE))
-	{
-		SetPointerCursor(handCursor);
-		goToMenu();
-		return;
-	}
-
-	if (_game->won())
-	{
-		if (_winAgain.clicked() || IsEnterPressed())
-		{
-			_game->restart();
-			SetPointerCursor(handCursor);
-			return;
-		}
-		else if (_winMenu.clicked())
-		{
-			SetPointerCursor(handCursor);
-			goToMenu();
-			return;
-		}
-	}
-
-	if (IsKeyPressed(KEY_R))
-	{
-		_game->restart();
-		SetPointerCursor(handCursor);
-		return;
-	}
-
-	_game->update(dt);
-	SetPointerCursor(handCursor);
 }
 
 void App::drawFps()
@@ -623,87 +512,4 @@ void App::drawCredits()
 	_creditsBack.draw();
 
 	ui::DrawTextCentered("ESC OR ENTER TO RETURN", height - 36.0f, 14.0f, theme::TextMuted, 1.5f);
-}
-
-void App::drawGame()
-{
-	layoutGame();
-
-	if (!_game)
-		return;
-
-	_game->draw();
-
-	const int width = GetScreenWidth();
-	const int height = GetScreenHeight();
-	const int hudHeight = static_cast<int>(MazeGame::HUD_HEIGHT);
-	const int footerHeight = static_cast<int>(MazeGame::FOOTER_HEIGHT);
-
-	DrawRectangle(0, 0, width, hudHeight, Fade(theme::Panel, 0.96f));
-	DrawRectangle(0, hudHeight - 1, width, 1, theme::PanelBorder);
-
-	_gameMenu.draw();
-
-	const std::string title = "MAZE " + std::to_string(_game->size()) + " x " +
-		std::to_string(_game->size());
-	ui::DrawTextCenteredX(title.c_str(), width * 0.5f, 20.0f, 26.0f, theme::Text, 2.0f);
-	ui::DrawTextCenteredX("FIND THE GOLDEN EXIT", width * 0.5f, 50.0f, 13.0f,
-		theme::TextMuted, 2.0f);
-
-	const float right = width - 24.0f;
-	const std::string moves = "MOVES " + std::to_string(_game->moves());
-	if (_showTimer)
-	{
-		const std::string time = "TIME " + FormatTime(_game->elapsed());
-		ui::DrawTextRight(time.c_str(), right, 18.0f, 16.0f, theme::Text, 1.0f);
-		ui::DrawTextRight(moves.c_str(), right, 44.0f, 16.0f, theme::TextMuted, 1.0f);
-	}
-	else
-	{
-		ui::DrawTextRight(moves.c_str(), right, 31.0f, 16.0f, theme::Text, 1.0f);
-	}
-
-	DrawRectangle(0, height - footerHeight, width, footerHeight, Fade(theme::Panel, 0.82f));
-	DrawRectangle(0, height - footerHeight, width, 1, theme::PanelBorder);
-	ui::DrawTextCentered("WASD / ARROWS: MOVE    R: NEW MAZE    ESC: MENU", height - 30.0f,
-		15.0f, theme::TextMuted, 1.5f);
-
-	if (_game->won())
-	{
-		DrawRectangle(0, 0, width, height, Fade(BLACK, 0.62f));
-
-		const Rectangle &panel = _winPanel;
-		const float centerX = panel.x + panel.width * 0.5f;
-
-		DrawRectangleRounded({panel.x, panel.y + 6.0f, panel.width, panel.height}, 0.05f, 12,
-			Fade(BLACK, 0.35f));
-		DrawRectangleRounded(panel, 0.05f, 12, theme::Panel);
-		DrawRectangleRoundedLinesEx(panel, 0.05f, 12, 2.0f, theme::Accent);
-
-		ui::DrawTextCenteredX("MAZE SOLVED!", centerX, panel.y + 34.0f, 40.0f,
-			theme::Success, 3.0f);
-		ui::DrawTextCenteredX("YOU FOUND THE WAY OUT", centerX, panel.y + 88.0f, 14.0f,
-			theme::TextMuted, 3.0f);
-
-		const float statY = panel.y + 126.0f;
-		const float statWidth = (panel.width - 80.0f) * 0.5f;
-		Rectangle timeBox{panel.x + 32.0f, statY, statWidth, 72.0f};
-		Rectangle movesBox{panel.x + panel.width - 32.0f - statWidth, statY, statWidth, 72.0f};
-
-		DrawRectangleRounded(timeBox, 0.20f, 10, theme::PanelHover);
-		DrawRectangleRounded(movesBox, 0.20f, 10, theme::PanelHover);
-
-		ui::DrawTextCenteredX("TIME", timeBox.x + statWidth * 0.5f, statY + 11.0f, 12.0f,
-			theme::TextMuted, 2.0f);
-		ui::DrawTextCenteredX(FormatTime(_game->elapsed()).c_str(),
-			timeBox.x + statWidth * 0.5f, statY + 34.0f, 26.0f, theme::Text, 1.5f);
-
-		ui::DrawTextCenteredX("MOVES", movesBox.x + statWidth * 0.5f, statY + 11.0f, 12.0f,
-			theme::TextMuted, 2.0f);
-		ui::DrawTextCenteredX(std::to_string(_game->moves()).c_str(),
-			movesBox.x + statWidth * 0.5f, statY + 34.0f, 26.0f, theme::Text, 1.5f);
-
-		_winAgain.draw();
-		_winMenu.draw();
-	}
 }

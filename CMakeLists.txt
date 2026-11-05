@@ -26,7 +26,6 @@ add_executable(labyrinth)
 target_sources(labyrinth PRIVATE
 	src/frontend/main.cpp
 	src/frontend/app.cpp
-	src/frontend/game.cpp
 	src/frontend/ui.cpp
 )
 target_link_libraries(labyrinth PRIVATE labgen raylib)
