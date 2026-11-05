@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
-project(labyrinth)
+project(labyrinth LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(labgen STATIC)
 target_sources(labgen
@@ -16,7 +19,17 @@ target_sources(labgen
 			src/backend/utils.h
 )
 
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(raylib)
+
+add_executable(labyrinth)
+target_sources(labyrinth PRIVATE
+	src/frontend/main.cpp
+	src/frontend/app.cpp
+	src/frontend/game.cpp
+	src/frontend/ui.cpp
+)
+target_link_libraries(labyrinth PRIVATE labgen raylib)
 
 add_executable(pathtest)
 target_sources(pathtest PRIVATE src/tests/pathtest.cpp)
