@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	double avgWallCount = 0.0;
 	for (int i = 0; i<count; ++i)
 	{
-		Field *field = new Field(size, size);
+		Field *field = new Field(size, size, false);
 		if (field->getCell(size-1, size-1)==EMPTY) ++countGood;
 		for (int j = 0; j<size; ++j)
 			for (int k = 0; k<size; ++k)
