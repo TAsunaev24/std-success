@@ -112,7 +112,12 @@ bool Field::setCell(coordinate cell, enum cellType val)
 	return 0;
 }
 
-Field::Field(int height, int width)
+coordinate Field::getSize()
+{
+	return {_h, _w};
+}
+
+Field::Field(int height, int width, bool regenerateIfInvalid)
 {
 	_h = height;
 	_w = width;
@@ -126,7 +131,10 @@ Field::Field(int height, int width)
 			_f[i][j] = WALL;
 	}
 
-	_generateField();
+	do
+	{
+		_generateField();
+	} while (regenerateIfInvalid && (getCell(height - 1, width - 1) != EMPTY));
 }
 
 Field::~Field()

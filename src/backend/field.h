@@ -52,7 +52,8 @@ public:
 	enum cellType getCell(coordinate cell);
 	enum cellType getCell(int y, int x);
 	bool setCell(coordinate cell, enum cellType val);
-	Field(int height, int width);
+	coordinate getSize();
+	Field(int height, int width, bool regenerateIfInvalid);
 	~Field();
 };
 

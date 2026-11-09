@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	Field field = Field(size, size);
+	Field field = Field(size, size, true);
 	for (int i = 0; i<size; ++i)
 	{
 		for (int j = 0; j<size; ++j)
