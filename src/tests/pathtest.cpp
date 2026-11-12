@@ -29,10 +29,10 @@ int main(int argc, char **argv)
 		for (int j = 0; j<size; ++j)
 			for (int k = 0; k<size; ++k)
 				avgWallCount += field->getCell(j, k)==WALL;
-		if (i) avgWallCount /= 2;
 
 		delete field;
 	}
+	avgWallCount /= count;
 	cout << "The test passed " << ((double)countGood)/count*100 << "% of the times" << endl;
 	cout << "Average wall percentage: " << ((double)avgWallCount)/(size*size)*100 << "%" << endl;
 }

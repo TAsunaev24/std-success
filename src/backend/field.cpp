@@ -58,7 +58,7 @@ void Field::_generateField()
 			exchange = applyDirection(start, getDirection(start, start));
 			if ((getCell(exchange) != WALL) || _checkCell(exchange, start)) continue;
 			if (getAction() == SPLIT) queue.push_back(start);
-			setCell(start, EMPTY);
+			setCell(exchange, EMPTY);
 			start = exchange;
 		}
 	}
@@ -125,14 +125,14 @@ Field::Field(int height, int width, bool regenerateIfInvalid)
 	// alloc
 	_f = new enum cellType*[_h];
 	for (int i = 0; i < _h; ++i)
-	{
 		_f[i] = new enum cellType[_w];
-		for (int j = 0; j<_w; ++j)
-			_f[i][j] = WALL;
-	}
 
 	do
 	{
+		for (int i = 0; i < _h; ++i)
+			for (int j = 0; j<_w; ++j)
+				_f[i][j] = WALL;
+
 		_generateField();
 	} while (regenerateIfInvalid && (getCell(height - 1, width - 1) != EMPTY));
 }
