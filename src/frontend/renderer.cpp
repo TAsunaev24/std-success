@@ -6,17 +6,21 @@ class Renderer
 {
 	private:
 		Field _f;
+		int _fowRadius;
 
 		int _getCellSize();
+		bool _isInFowRadius(Vector2 cell);
 		Vector2 _getFieldSides();
 		Vector2 _getTopLeftPoint();
 		Vector2 _getCellTopLeft(Vector2 cell);
+		int _getMaxFowRadius();
 
 		coordinate _playerPos;
 	public:
 		bool shouldClose;
 		void tryMove(enum generationDirection direction);
 		Renderer(int height, int width);
+		Renderer(int height, int width, int fowRadius);
 		void drawFrame();
 };
 
@@ -37,6 +41,7 @@ Vector2 Renderer::_getFieldSides()
 {
 	Vector2 size;
 	size.x = _getCellSize() * _f.getSize().x;
+	
 	size.y = _getCellSize() * _f.getSize().y;
 	return size;
 }
@@ -55,6 +60,16 @@ Vector2 Renderer::_getCellTopLeft(Vector2 cell)
 	point.x = _getTopLeftPoint().x + _getCellSize() * cell.x;
 	point.y = _getTopLeftPoint().y + _getCellSize() * cell.y;
 	return point;
+}
+
+bool Renderer::_isInFowRadius(Vector2 cell)
+{
+	return (abs(cell.x - _playerPos.x) + abs(cell.y - _playerPos.y)) < _fowRadius;
+}
+
+int Renderer::_getMaxFowRadius()
+{
+	return _f.getSize().x + _f.getSize().y - 2;
 }
 
 void Renderer::tryMove(enum generationDirection direction)
@@ -86,6 +101,14 @@ void Renderer::tryMove(enum generationDirection direction)
 
 Renderer::Renderer(int height, int width) : _f(height, width, true)
 {
+	_fowRadius = _getMaxFowRadius();
+	shouldClose = false;
+	_playerPos = {0, 0};
+}
+
+Renderer::Renderer(int height, int width, int fowRadius) : _f(height, width, true)
+{
+	_fowRadius = max(fowRadius, _getMaxFowRadius());
 	shouldClose = false;
 	_playerPos = {0, 0};
 }
@@ -104,6 +127,9 @@ void Renderer::drawFrame()
 			Vector2 c;
 			c.x = j;
 			c.y = i;
+			
+			if (!_isInFowRadius(c)) continue;
+
 			Vector2 cell = _getCellTopLeft(c);
 			if (i == _playerPos.y && j == _playerPos.x) DrawCircle(cell.x+cs/2, cell.y+cs/2, cs/2, ORANGE);
 			if (_f.getCell(i, j) == WALL) DrawRectangle(cell.x, cell.y, cs, cs, WHITE);
