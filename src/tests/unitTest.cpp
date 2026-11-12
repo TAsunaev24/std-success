@@ -86,3 +86,41 @@ string generateCSVTableForTest(vector<UnitTestEntry> entries, double results, do
 
     return csv.str();
 }
+int main()
+{
+	UnitTests tests = UnitTests();
+
+	cout << "Tests pending:" << endl;
+
+	vector<UnitTestEntry> entries = tests.getEntries();
+	for (size_t i = 0; i < entries.size(); i++)
+	{
+		cout << "#" << i + 1 << ": " << entries[i].name << " with argument " << entries[i].arg << endl;
+	}
+
+	double *results = new double[entries.size()];
+	double desired[]; // TODO add desired values;	
+	for (int i = 0; i < entries.size(); i++)
+	{
+		results[i] = tests.getPassingPercentageForTest(i, 1000);
+		if (results[i] >= desired[i])
+		{
+			cout << "Test #" << i + 1 << " PASSED" << endl;
+		}
+		else
+		{
+			cout << "Test #" << i + 1 << " FAILED" << endl;
+		}
+	}
+
+	cout << "Writing results to results.csv" << endl;
+
+	string str = generateCSVTableForTest(entries, results, desired);
+	ofstream of = ofstream("results.csv");
+	of << str;
+	of.close();
+
+	cout << "Done" << endl;
+
+	return 0;
+}
