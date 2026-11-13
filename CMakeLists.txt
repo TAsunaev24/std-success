@@ -19,16 +19,9 @@ target_sources(labgen
 			src/backend/utils.h
 )
 
-set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(raylib)
 
-add_executable(labyrinth)
-target_sources(labyrinth PRIVATE
-	src/frontend/main.cpp
-	src/frontend/app.cpp
-	src/frontend/ui.cpp
-)
-target_link_libraries(labyrinth PRIVATE labgen raylib)
+if(DEFINED BUILD_EXAMPLES)
 
 add_executable(pathtest)
 target_sources(pathtest PRIVATE src/tests/pathtest.cpp)
@@ -37,3 +30,14 @@ target_link_libraries(pathtest PRIVATE labgen)
 add_executable(labtest)
 target_sources(labtest PRIVATE src/tests/labtest.cpp)
 target_link_libraries(labtest PRIVATE labgen)
+
+endif()
+
+add_executable(labyrinth)
+target_sources(labyrinth PRIVATE
+	src/frontend/main.cpp
+	src/frontend/app.cpp
+	src/frontend/ui.cpp
+	src/frontend/renderer.cpp
+)
+target_link_libraries(labyrinth PRIVATE labgen raylib)
