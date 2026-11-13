@@ -108,7 +108,7 @@ Renderer::Renderer(int height, int width) : _f(height, width, true)
 
 Renderer::Renderer(int height, int width, int fowRadius) : _f(height, width, true)
 {
-	_fowRadius = max(fowRadius, _getMaxFowRadius());
+	_fowRadius = min(fowRadius, _getMaxFowRadius());
 	shouldClose = false;
 	_playerPos = {0, 0};
 }
