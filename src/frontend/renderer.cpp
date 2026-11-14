@@ -6,13 +6,17 @@ class Renderer
 {
 	private:
 		Field _f;
+		int _maxFowRadius;
 		int _fowRadius;
+		int _frameNumber;
 
 		int _getCellSize();
 		bool _isInFowRadius(Vector2 cell);
+		bool _hasReachedEnd();
 		Vector2 _getFieldSides();
 		Vector2 _getTopLeftPoint();
 		Vector2 _getCellTopLeft(Vector2 cell);
+		void _checkChangeRadius(); // animation
 		int _getMaxFowRadius();
 
 		coordinate _playerPos;
@@ -26,6 +30,11 @@ class Renderer
 
 
 #define PADDING 30
+
+bool Renderer::_hasReachedEnd()
+{
+	return (_playerPos.x == _f.getSize().x - 1) && (_playerPos.y == _f.getSize().y - 1);
+}
 
 int Renderer::_getCellSize()
 {
@@ -67,6 +76,25 @@ bool Renderer::_isInFowRadius(Vector2 cell)
 	return (abs(cell.x - _playerPos.x) + abs(cell.y - _playerPos.y)) < _fowRadius;
 }
 
+void Renderer::_checkChangeRadius()
+{
+	if (_frameNumber % (GetMonitorRefreshRate(0) / _maxFowRadius) == 0)
+	{
+		if (_hasReachedEnd())
+		{
+			--_fowRadius;
+			if (_fowRadius == 0)
+				shouldClose = true;
+		}
+		else
+		{
+			++_fowRadius;
+		}
+	}
+
+	++_frameNumber;
+}
+
 int Renderer::_getMaxFowRadius()
 {
 	return _f.getSize().x + _f.getSize().y - 2;
@@ -74,6 +102,8 @@ int Renderer::_getMaxFowRadius()
 
 void Renderer::tryMove(enum generationDirection direction)
 {
+	if (_fowRadius != _maxFowRadius) return; // animation is playing
+
 	switch (direction)
 	{
 		case UP:
@@ -97,18 +127,24 @@ void Renderer::tryMove(enum generationDirection direction)
 			break;
 		}		
 	}
+
+	if (_hasReachedEnd()) --_fowRadius;
 }
 
 Renderer::Renderer(int height, int width) : _f(height, width, true)
 {
-	_fowRadius = _getMaxFowRadius();
+	_maxFowRadius = _getMaxFowRadius();
+	_fowRadius = 1;
+	_frameNumber = 0;
 	shouldClose = false;
 	_playerPos = {0, 0};
 }
 
 Renderer::Renderer(int height, int width, int fowRadius) : _f(height, width, true)
 {
-	_fowRadius = min(fowRadius, _getMaxFowRadius());
+	_maxFowRadius = min(fowRadius, _getMaxFowRadius());
+	_fowRadius = 1;
+	_frameNumber = 0;
 	shouldClose = false;
 	_playerPos = {0, 0};
 }
@@ -135,4 +171,7 @@ void Renderer::drawFrame()
 			if (_f.getCell(i, j) == WALL) DrawRectangle(cell.x, cell.y, cs, cs, WHITE);
 		}
 	}
+
+	if (_fowRadius != _maxFowRadius)
+		_checkChangeRadius();
 }
