@@ -41,6 +41,7 @@ private:
 	void drawSizeSelect();
 	void drawSettings();
 	void drawCredits();
+	void drawLabyrinth();
 	void drawFps();
 
 	void activateMenu(int index);

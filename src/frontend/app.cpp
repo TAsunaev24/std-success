@@ -77,6 +77,7 @@ void App::update()
 			break;
 		case Screen::Labyrinth:
 			updateLabyrinth();
+			break;
 	}
 }
 
@@ -99,7 +100,8 @@ void App::draw()
 		case Screen::Credits:
 			drawCredits();
 			break;
-		case Screen::Labyrinth: // no need to update the labyrinth twice, causes double inputs
+		case Screen::Labyrinth:
+			drawLabyrinth();
 			break;
 	}
 
@@ -366,16 +368,25 @@ void App::updateCredits()
 	SetPointerCursor(_creditsBack.hovered);
 }
 
+// handle input for labyrinth
 void App::updateLabyrinth()
 {
 	if (IsKeyPressed(KEY_UP)) _labyrinthRenderer->tryMove(UP);
 	if (IsKeyPressed(KEY_DOWN)) _labyrinthRenderer->tryMove(DOWN);
 	if (IsKeyPressed(KEY_LEFT)) _labyrinthRenderer->tryMove(LEFT);
 	if (IsKeyPressed(KEY_RIGHT)) _labyrinthRenderer->tryMove(RIGHT);
-	_labyrinthRenderer->drawFrame();
-	drawFps();
 
-	if (_labyrinthRenderer->shouldClose || IsKeyPressed(KEY_ESCAPE))
+	if (IsKeyPressed(KEY_ESCAPE))
+	{
+		_labyrinthRenderer->shouldClose = true;
+	}
+}
+
+void App::drawLabyrinth()
+{
+	_labyrinthRenderer->drawFrame();
+
+	if (_labyrinthRenderer->shouldClose)
 	{
 		_screen = Screen::SizeSelect;
 		delete _labyrinthRenderer;
