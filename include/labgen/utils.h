@@ -8,5 +8,6 @@ enum generationDirection getDirection(coordinate loc, coordinate end);
 enum generationAction getAction();
 unsigned int getRandom();
 int getFogRadius(int size, int preset);
+int manhattanDistance(coordinate first, coordinate second);
 
 #endif

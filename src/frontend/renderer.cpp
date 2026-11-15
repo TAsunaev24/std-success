@@ -2,6 +2,7 @@
 #include "field.h"
 #include "raylib.h"
 #include "renderer.h"
+#include "utils.h"
 
 #define PADDING 30
 
@@ -47,7 +48,8 @@ Vector2 Renderer::_getCellTopLeft(Vector2 cell)
 
 bool Renderer::_isInFowRadius(Vector2 cell)
 {
-	return (abs(cell.x - _playerPos.x) + abs(cell.y - _playerPos.y)) < _fowRadius;
+	const coordinate cellPosition{static_cast<int>(cell.y), static_cast<int>(cell.x)};
+	return manhattanDistance(cellPosition, _playerPos) < _fowRadius;
 }
 
 void Renderer::_checkChangeRadius()

@@ -52,6 +52,11 @@ int getFogRadius(int size, int preset)
 	}
 }
 
+int manhattanDistance(coordinate first, coordinate second)
+{
+	return abs(first.x - second.x) + abs(first.y - second.y);
+}
+
 enum generationDirection getDirection(coordinate loc, coordinate end)
 {
 	vector<enum generationDirection> possibleDirections;
