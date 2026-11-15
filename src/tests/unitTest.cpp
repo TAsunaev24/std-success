@@ -128,11 +128,35 @@ double labyrinth_wall_ratio_checker(int size)
 	return -((double)wallQuantity)/(size*size);
 }
 
+double random_checker(int range)
+{
+	int *randomArrayCount = new int[range];
+
+	for (int i = 0; i < range; i++)
+	{
+		int index = getRandom() % range;
+		randomArrayCount[index]++;
+	}
+
+	int nonEmptyQuantity = 0;
+	for (int i = 0; i < range; i++)
+	{
+		if (randomArrayCount[i] > 0)
+		{
+			nonEmptyQuantity++;
+		}
+	}
+
+	delete[] randomArrayCount;
+	return ((double)nonEmptyQuantity) / range;
+}
+
 int main()
 {
 	UnitTests tests = UnitTests();
 	tests.addTest(labyrinth_checker, 30, "Generated labyrinth has a path to the end", "Labyrinth size", "% of total labyrinths generated with a way to get to the finish");
 	tests.addTest(labyrinth_wall_ratio_checker, 30, "Generated labyrinth does not have wall congestion", "Labyrinth size", "% of wall in relation to the total cell count");
+	tests.addTest(random_checker, 1000, "Randomizer function(getRandom()) returns nonrepeating values", "Range", "100% means every value generated is unique");
 
 	cout << "Tests pending:" << endl;
 
@@ -143,7 +167,7 @@ int main()
 	}
 
 	double *results = new double[entries.size()];
-	double desired[] = { 0.9, -0.5 }; // Negative value means that the result should be lower that the desired value in order to pass
+	double desired[] = { 0.9, -0.5, 0.9 }; // Negative value means that the result should be lower that the desired value in order to pass
 	for (int i = 0; i < entries.size(); i++)
 	{
 		results[i] = tests.getPassingPercentageForTest(i, 1000);
