@@ -38,6 +38,11 @@ App::App()
 		const int size = (i + 1) * 10;
 		_presetButtons[i] = ui::Button(std::to_string(size) + " x " + std::to_string(size));
 	}
+
+	_fogButtons[0] = ui::Button("EASY", true);
+	_fogButtons[1] = ui::Button("MEDIUM");
+	_fogButtons[2] = ui::Button("HARD");
+	_fogButtons[3] = ui::Button("VERY HARD");
 }
 
 App::~App()
@@ -139,7 +144,7 @@ void App::layoutSizeSelect()
 	_sizeBack.rect = {32.0f, 28.0f, 120.0f, 44.0f};
 
 	const float sliderWidth = std::clamp(width * 0.52f, 360.0f, 620.0f);
-	const float sliderCenterY = height * 0.46f;
+	const float sliderCenterY = height * 0.41f;
 	_sliderTrack = {centerX - sliderWidth * 0.5f, sliderCenterY - 4.0f, sliderWidth, 8.0f};
 
 	_sizeMinus.rect = {_sliderTrack.x - 64.0f, sliderCenterY - 24.0f, 48.0f, 48.0f};
@@ -149,13 +154,23 @@ void App::layoutSizeSelect()
 	constexpr float presetHeight = 42.0f;
 	constexpr float presetGap = 12.0f;
 	const float presetsWidth = presetWidth * 5.0f + presetGap * 4.0f;
-	const float presetsY = height * 0.565f;
+	const float presetsY = height * 0.505f;
 
 	for (int i = 0; i < 5; ++i)
 		_presetButtons[i].rect = {centerX - presetsWidth * 0.5f + i * (presetWidth + presetGap),
 			presetsY, presetWidth, presetHeight};
 
-	_sizeStart.rect = {centerX - 160.0f, height * 0.72f, 320.0f, 60.0f};
+	const float fogWidth = std::clamp((width - 80.0f - 3.0f * 12.0f) / 4.0f, 88.0f, 123.0f);
+	constexpr float fogHeight = 42.0f;
+	constexpr float fogGap = 12.0f;
+	const float fogTotalWidth = fogWidth * 4.0f + fogGap * 3.0f;
+	const float fogY = height * 0.635f;
+
+	for (int i = 0; i < 4; ++i)
+		_fogButtons[i].rect = {centerX - fogTotalWidth * 0.5f + i * (fogWidth + fogGap),
+			fogY, fogWidth, fogHeight};
+
+	_sizeStart.rect = {centerX - 160.0f, height * 0.76f, 320.0f, 60.0f};
 }
 
 void App::layoutSettings()
@@ -280,12 +295,16 @@ void App::updateSizeSelect()
 	_sizeBack.update(mouse);
 	for (ui::Button &button : _presetButtons)
 		button.update(mouse);
+	for (ui::Button &button : _fogButtons)
+		button.update(mouse);
 
 	bool handCursor = _sizeMinus.hovered || _sizePlus.hovered || _sizeStart.hovered ||
 		_sizeBack.hovered || _sliderDragging ||
 		CheckCollisionPointRec(mouse, {_sliderTrack.x - 16.0f, _sliderTrack.y - 20.0f,
 			_sliderTrack.width + 32.0f, _sliderTrack.height + 40.0f});
 	for (const ui::Button &button : _presetButtons)
+		handCursor = handCursor || button.hovered;
+	for (const ui::Button &button : _fogButtons)
 		handCursor = handCursor || button.hovered;
 
 	if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
@@ -302,6 +321,13 @@ void App::updateSizeSelect()
 	{
 		if (_presetButtons[i].clicked())
 			_mazeSize = (i + 1) * 10;
+	}
+
+	for (int i = 0; i < 4; ++i)
+	{
+		if (_fogButtons[i].clicked())
+			_fogPreset = i;
+		_fogButtons[i].primary = (_fogPreset == i);
 	}
 
 	if (_sizeStart.clicked() || IsEnterPressed())
@@ -456,6 +482,11 @@ void App::drawSizeSelect()
 	ui::DrawTextCentered("QUICK SELECT", _presetButtons[0].rect.y - 24.0f, 12.0f,
 		theme::TextMuted, 3.0f);
 	for (const ui::Button &button : _presetButtons)
+		button.draw();
+
+	ui::DrawTextCentered("FOG OF WAR", _fogButtons[0].rect.y - 24.0f, 12.0f,
+		theme::TextMuted, 3.0f);
+	for (const ui::Button &button : _fogButtons)
 		button.draw();
 
 	_sizeStart.draw();
