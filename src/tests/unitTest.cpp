@@ -45,6 +45,16 @@ void UnitTests::addTest(double (*checker)(int), int checkerArgument, string test
 	_entries.push_back(entry);
 }
 
+double UnitTests::getPassingPercentageForTest(int index, int count)
+{
+	if (index<0 || index >= _entries.size()) return -1.0;
+	double sum = 0;
+	for (int i = 0; i < count; i++)
+		sum += _entries[index].checker(_entries[index].arg);
+
+	return sum / count;
+}
+
 vector<UnitTestEntry> UnitTests::getEntries()
 {
 	return _entries;
@@ -62,7 +72,7 @@ char getSignForResult(double value)
     }
 }
 
-string generateCSVTableForTest(vector<UnitTestEntry> entries, double results, doublepassingValues)
+string generateCSVTableForTest(vector<UnitTestEntry> entries, double* results, double* passingValues)
 {
     stringstream csv;
 
@@ -90,9 +100,20 @@ string generateCSVTableForTest(vector<UnitTestEntry> entries, double results, do
 
     return csv.str();
 }
+
+double labyrinth_checker(int size)
+{
+	Field field = Field(size, size, false);
+	if (field.getCell(size - 1, size - 1) == EMPTY)
+		return 1; // true
+	else
+		return 0; // false
+}
+
 int main()
 {
 	UnitTests tests = UnitTests();
+	tests.addTest(labyrinth_checker, 30, "Generated labyrinth has a path to the end", "Labyrinth size", "% of total labyrinths generated with a way to get to the finish");
 
 	cout << "Tests pending:" << endl;
 
@@ -103,7 +124,7 @@ int main()
 	}
 
 	double *results = new double[entries.size()];
-	double desired[]; // TODO add desired values;	
+	double desired[] = { 0.9 };
 	for (int i = 0; i < entries.size(); i++)
 	{
 		results[i] = tests.getPassingPercentageForTest(i, 1000);
