@@ -35,6 +35,23 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 	return current;
 }
 
+int getFogRadius(int size, int preset)
+{
+	switch (preset)
+	{
+		case 0:
+			return size * 3 / 4;
+		case 1:
+			return size / 2;
+		case 2:
+			return size / 4;
+		case 3:
+			return size / 6;
+		default:
+			return size / 2;
+	}
+}
+
 enum generationDirection getDirection(coordinate loc, coordinate end)
 {
 	vector<enum generationDirection> possibleDirections;

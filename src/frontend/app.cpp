@@ -1,4 +1,5 @@
 #include "app.h"
+#include "utils.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -19,22 +20,6 @@ void SetPointerCursor(bool pointing)
 	SetMouseCursor(pointing ? MOUSE_CURSOR_POINTING_HAND : MOUSE_CURSOR_DEFAULT);
 }
 
-int GetFogRadius(int size, int preset)
-{
-	switch (preset)
-	{
-		case 0:
-			return size / 4 * 3;
-		case 1:
-			return size / 2;
-		case 2:
-			return size / 4;
-		case 3:
-			return size / 6;
-		default:
-			return size / 2;
-	}
-}
 } // namespace
 
 App::App()
@@ -347,7 +332,7 @@ void App::updateSizeSelect()
 
 	if (_sizeStart.clicked() || IsEnterPressed())
 	{
-		_labyrinthRenderer = new Renderer(_mazeSize, _mazeSize, GetFogRadius(_mazeSize, _fogPreset));
+		_labyrinthRenderer = new Renderer(_mazeSize, _mazeSize, getFogRadius(_mazeSize, _fogPreset));
 		_screen = Screen::Labyrinth;
 		return;
 	}

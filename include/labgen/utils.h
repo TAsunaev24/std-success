@@ -7,5 +7,6 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 enum generationDirection getDirection(coordinate loc, coordinate end);
 enum generationAction getAction();
 unsigned int getRandom();
+int getFogRadius(int size, int preset);
 
 #endif
