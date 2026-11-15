@@ -26,7 +26,7 @@ App::App()
 	InitWindow(1280, 800, "Labyrinth");
 	SetWindowMinSize(900, 600);
 	SetExitKey(KEY_NULL);
-	SetTargetFPS(60);
+	SetTargetFPS(GetMonitorRefreshRate(0));
 
 	_menuButtons[0] = ui::Button("PLAY", true);
 	_menuButtons[1] = ui::Button("SETTINGS");
@@ -99,8 +99,7 @@ void App::draw()
 		case Screen::Credits:
 			drawCredits();
 			break;
-		case Screen::Labyrinth:
-			updateLabyrinth();
+		case Screen::Labyrinth: // no need to update the labyrinth twice, causes double inputs
 			break;
 	}
 
@@ -369,9 +368,14 @@ void App::updateCredits()
 
 void App::updateLabyrinth()
 {
+	if (IsKeyPressed(KEY_UP)) _labyrinthRenderer->tryMove(UP);
+	if (IsKeyPressed(KEY_DOWN)) _labyrinthRenderer->tryMove(DOWN);
+	if (IsKeyPressed(KEY_LEFT)) _labyrinthRenderer->tryMove(LEFT);
+	if (IsKeyPressed(KEY_RIGHT)) _labyrinthRenderer->tryMove(RIGHT);
 	_labyrinthRenderer->drawFrame();
+	drawFps();
 
-	if (_labyrinthRenderer->shouldClose)
+	if (_labyrinthRenderer->shouldClose || IsKeyPressed(KEY_ESCAPE))
 	{
 		_screen = Screen::SizeSelect;
 		delete _labyrinthRenderer;
