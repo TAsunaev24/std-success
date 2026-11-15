@@ -75,6 +75,8 @@ void App::update()
 		case Screen::Credits:
 			updateCredits();
 			break;
+		case Screen::Labyrinth:
+			updateLabyrinth();
 	}
 }
 
@@ -96,6 +98,9 @@ void App::draw()
 			break;
 		case Screen::Credits:
 			drawCredits();
+			break;
+		case Screen::Labyrinth:
+			updateLabyrinth();
 			break;
 	}
 
@@ -298,11 +303,11 @@ void App::updateSizeSelect()
 			_mazeSize = (i + 1) * 10;
 	}
 
-	// The game screen was intentionally removed. The size dialog stays intact
-	// as the place where a future game implementation will be launched.
 	if (_sizeStart.clicked() || IsEnterPressed())
 	{
-		SetPointerCursor(handCursor);
+		// TODO implement fog of war
+		_labyrinthRenderer = new Renderer(_mazeSize, _mazeSize);
+		_screen = Screen::Labyrinth;
 		return;
 	}
 
@@ -360,6 +365,17 @@ void App::updateCredits()
 	}
 
 	SetPointerCursor(_creditsBack.hovered);
+}
+
+void App::updateLabyrinth()
+{
+	_labyrinthRenderer->drawFrame();
+
+	if (_labyrinthRenderer->shouldClose)
+	{
+		_screen = Screen::SizeSelect;
+		delete _labyrinthRenderer;
+	}
 }
 
 void App::drawFps()

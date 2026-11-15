@@ -4,6 +4,7 @@
 #include <array>
 
 #include "ui.h"
+#include "renderer.h"
 
 class App
 {
@@ -18,7 +19,8 @@ private:
 		Menu,
 		SizeSelect,
 		Settings,
-		Credits
+		Credits,
+		Labyrinth
 	};
 
 	void update();
@@ -33,6 +35,7 @@ private:
 	void updateSizeSelect();
 	void updateSettings();
 	void updateCredits();
+	void updateLabyrinth();
 
 	void drawMenu();
 	void drawSizeSelect();
@@ -42,6 +45,8 @@ private:
 
 	void activateMenu(int index);
 	void toggleFullscreen();
+
+	Renderer *_labyrinthRenderer = nullptr;
 
 	Screen _screen = Screen::Menu;
 	bool _closeRequested = false;
