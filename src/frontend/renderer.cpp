@@ -148,6 +148,12 @@ void Renderer::drawFrame()
 		}
 	}
 
+	const coordinate end = {_f.getSize().y - 1, _f.getSize().x - 1};
+	const Vector2 exitTopLeft = _getCellTopLeft({static_cast<float>(end.x), static_cast<float>(end.y)});
+	const float exitCenterX = exitTopLeft.x + _getCellSize() * 0.5f;
+	const float exitCenterY = exitTopLeft.y + _getCellSize() * 0.5f;
+	DrawCircleLines(exitCenterX, exitCenterY, _getCellSize() * 0.38f, GREEN);
+
 	if (_fowRadius != _maxFowRadius)
 		_checkChangeRadius();
 }
