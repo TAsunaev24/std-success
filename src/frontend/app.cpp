@@ -201,18 +201,16 @@ void App::layoutSettings()
 	const float startY = height * 0.30f;
 	const float x = (width - rowWidth) * 0.5f;
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 2; ++i)
 		_settingsRows[i] = {x, startY + i * (rowHeight + rowGap), rowWidth, rowHeight};
 
 	const Rectangle &first = _settingsRows[0];
-	const Rectangle &second = _settingsRows[1];
-	const Rectangle &third = _settingsRows[2];
 	const float toggleOffsetX = rowWidth - 24.0f - 64.0f;
 	_fpsToggle.rect = {first.x + toggleOffsetX, first.y + (rowHeight - 32.0f) * 0.5f, 64.0f, 32.0f};
-	_timerToggle.rect = {second.x + toggleOffsetX, second.y + (rowHeight - 32.0f) * 0.5f, 64.0f, 32.0f};
-	_fullscreenToggle.rect = {third.x + toggleOffsetX, third.y + (rowHeight - 32.0f) * 0.5f, 64.0f, 32.0f};
+	const Rectangle &second = _settingsRows[1];
+	_fullscreenToggle.rect = {second.x + toggleOffsetX, second.y + (rowHeight - 32.0f) * 0.5f, 64.0f, 32.0f};
 
-	_settingsBack.rect = {width * 0.5f - 110.0f, startY + 3.0f * rowHeight + 2.0f * rowGap + 40.0f,
+	_settingsBack.rect = {width * 0.5f - 110.0f, startY + 2.0f * rowHeight + rowGap + 40.0f,
 		220.0f, 54.0f};
 }
 
@@ -370,17 +368,13 @@ void App::updateSettings()
 	const Vector2 mouse = GetMousePosition();
 
 	_fpsToggle.update(mouse);
-	_timerToggle.update(mouse);
 	_fullscreenToggle.update(mouse);
 	_settingsBack.update(mouse);
 
-	const bool handCursor = _fpsToggle.hovered || _timerToggle.hovered ||
-		_fullscreenToggle.hovered || _settingsBack.hovered;
+	const bool handCursor = _fpsToggle.hovered || _fullscreenToggle.hovered || _settingsBack.hovered;
 
 	if (_fpsToggle.clicked())
 		_showFps = !_showFps;
-	if (_timerToggle.clicked())
-		_showTimer = !_showTimer;
 	if (_fullscreenToggle.clicked())
 		toggleFullscreen();
 
@@ -517,15 +511,15 @@ void App::drawSettings()
 	ui::DrawBackground();
 
 	const int height = GetScreenHeight();
-	const char *labels[3] = {"SHOW FPS COUNTER", "SHOW TIMER", "FULLSCREEN"};
-	const bool values[3] = {_showFps, _showTimer, IsWindowFullscreen()};
-	const ui::ToggleSwitch *toggles[3] = {&_fpsToggle, &_timerToggle, &_fullscreenToggle};
+	const char *labels[2] = {"SHOW FPS COUNTER", "FULLSCREEN"};
+	const bool values[2] = {_showFps, IsWindowFullscreen()};
+	const ui::ToggleSwitch *toggles[2] = {&_fpsToggle, &_fullscreenToggle};
 
 	ui::DrawTextCentered("SETTINGS", height * 0.10f, 48.0f, theme::Text, 3.0f);
 	ui::DrawTextCentered("TUNE THE EXPERIENCE", height * 0.10f + 62.0f, 16.0f,
 		theme::TextMuted, 3.0f);
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		const Rectangle &row = _settingsRows[i];
 		const bool hovered = toggles[i]->hovered;

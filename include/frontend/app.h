@@ -53,7 +53,6 @@ private:
 	bool _closeRequested = false;
 
 	bool _showFps = false;
-	bool _showTimer = true;
 
 	std::array<ui::Button, 4> _menuButtons;
 	int _menuFocus = 0;
@@ -69,9 +68,8 @@ private:
 	ui::Button _sizeStart{"START GAME", true};
 	ui::Button _sizeBack{"BACK"};
 
-	std::array<Rectangle, 3> _settingsRows{};
+	std::array<Rectangle, 2> _settingsRows{};
 	ui::ToggleSwitch _fpsToggle;
-	ui::ToggleSwitch _timerToggle;
 	ui::ToggleSwitch _fullscreenToggle;
 	ui::Button _settingsBack{"BACK"};
 

@@ -23,7 +23,7 @@ Run the game:
 - `Play` opens the game setup screen:
   - Choose maze size from `10 x 10` to `50 x 50` using the slider, `-`/`+` buttons, or quick presets.
   - Select fog of war difficulty: `Easy` (`size / 4 * 3`), `Medium` (`size / 2`), `Hard` (`size / 4`), or `Very Hard` (`size / 6`).
-- `Settings` lets you toggle the FPS counter, timer, and fullscreen mode.
+- `Settings` lets you toggle the FPS counter and fullscreen mode.
 - `Credits` shows project and controls information.
 - `Quit` closes the app.
 
