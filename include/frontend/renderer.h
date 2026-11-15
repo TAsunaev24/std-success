@@ -1,8 +1,8 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include "../backend/field.h"
-#include "../../raylib/src/raylib.h"
+#include "field.h"
+#include "raylib.h"
 
 class Renderer
 {

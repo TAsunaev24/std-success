@@ -5,23 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(labgen STATIC)
-target_sources(labgen
-	PRIVATE
-		src/backend/field.cpp
-		src/backend/utils.cpp
-	PUBLIC
-		FILE_SET generatorHeaders
-		TYPE HEADERS
-		BASE_DIRS
-			src/backend
-		FILES
-			src/backend/field.h
-			src/backend/utils.h
-)
+target_sources(labgen PRIVATE src/labgen/field.cpp src/labgen/utils.cpp)
 
 add_subdirectory(raylib)
-
-if(DEFINED BUILD_EXAMPLES)
 
 add_executable(pathtest)
 target_sources(pathtest PRIVATE src/tests/pathtest.cpp)
@@ -31,7 +17,9 @@ add_executable(labtest)
 target_sources(labtest PRIVATE src/tests/labtest.cpp)
 target_link_libraries(labtest PRIVATE labgen)
 
-endif()
+add_executable(tablegen)
+target_sources(tablegen PRIVATE src/tests/unitTest.cpp)
+target_link_libraries(tablegen PRIVATE labgen)
 
 add_executable(labyrinth)
 target_sources(labyrinth PRIVATE
@@ -41,3 +29,5 @@ target_sources(labyrinth PRIVATE
 	src/frontend/renderer.cpp
 )
 target_link_libraries(labyrinth PRIVATE labgen raylib)
+
+include_directories(include/labgen include/frontend raylib/src)

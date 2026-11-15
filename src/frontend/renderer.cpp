@@ -1,6 +1,6 @@
 #include <cstdlib>
-#include "../backend/field.h"
-#include "../../raylib/src/raylib.h"
+#include "field.h"
+#include "raylib.h"
 #include "renderer.h"
 
 #define PADDING 30
