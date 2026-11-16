@@ -42,13 +42,13 @@ int getFogRadius(int size, enum fogPreset preset)
 		case NONE:
 			return size*2-2;
 		case EASY:
-			return size*3/4;
+			return size/4*3;
 		case MEDIUM:
-			return size;
+			return size/2;
 		case HARD:
-			return size / 2;
+			return size/3;
 		case VERY_HARD:
-			return size / 4;
+			return size/4;
 	}
 }
 

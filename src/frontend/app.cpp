@@ -393,10 +393,10 @@ void App::updateCredits()
 // handle input for labyrinth
 void App::updateLabyrinth()
 {
-	if (IsKeyPressed(KEY_UP)) _labyrinthRenderer->tryMove(UP);
-	if (IsKeyPressed(KEY_DOWN)) _labyrinthRenderer->tryMove(DOWN);
-	if (IsKeyPressed(KEY_LEFT)) _labyrinthRenderer->tryMove(LEFT);
-	if (IsKeyPressed(KEY_RIGHT)) _labyrinthRenderer->tryMove(RIGHT);
+	if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) _labyrinthRenderer->tryMove(UP);
+	if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) _labyrinthRenderer->tryMove(DOWN);
+	if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) _labyrinthRenderer->tryMove(LEFT);
+	if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) _labyrinthRenderer->tryMove(RIGHT);
 
 	if (IsKeyPressed(KEY_ESCAPE))
 	{
