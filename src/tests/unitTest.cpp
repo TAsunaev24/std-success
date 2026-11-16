@@ -72,6 +72,18 @@ char getSignForResult(double value)
     }
 }
 
+bool shouldPrintPercentage(double value)
+{
+	if (value <= 1.0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 string generateCSVTableForTest(vector<UnitTestEntry> entries, double* results, double* passingValues)
 {
     stringstream csv;
@@ -85,9 +97,20 @@ string generateCSVTableForTest(vector<UnitTestEntry> entries, double* results, d
         csv << entries[i].name << ","; // Description
         csv << entries[i].argDescription << ": " << entries[i].arg << ","; // Test Data
         csv << getSignForResult(passingValues[i]);
-        csv << abs(passingValues[i] * 100) << "%,"; // Expected
-        csv << abs(results[i] * 100) << "%,"; // Actual Result
+
+		if (shouldPrintPercentage(results[i]))
+		{
+			csv << abs(passingValues[i] * 100) << "%,"; // Expected
+			csv << abs(results[i] * 100) << "%,"; // Actual Result
+		}
+		else // for non-percentage values
+		{
+			csv << passingValues << ","; // Expected
+			csv << results[i] << ","; // Actual Result
+		}
+
 		csv << entries[i].resultExplaination << ",";
+
         if (results[i] > passingValues[i])
         {
             csv << "Passed,\n";
