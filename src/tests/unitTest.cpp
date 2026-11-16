@@ -181,6 +181,12 @@ double fogDistance_checker(int diff)
 	return (double)manhattanDistance(start, end);
 }
 
+double fogPreset_checker(int size)
+{
+	enum fogPreset preset = HARD;
+	return (double)getFogRadius(size, preset);
+}
+
 int main()
 {
 	UnitTests tests = UnitTests();
@@ -188,6 +194,7 @@ int main()
 	tests.addTest(labyrinth_wall_ratio_checker, 30, "Generated labyrinth does not have wall congestion", "Labyrinth size", "% of wall in relation to the total cell count");
 	tests.addTest(random_checker, 1000, "Randomizer function(getRandom()) returns nonrepeating values", "Range", "100% means every value generated is unique");
 	tests.addTest(fogDistance_checker, 100, "Fog of war distance is calculated properly", "Difference in height and width between two points", "Fog of war is displayed properly");
+	tests.addTest(fogPreset_checker, 100, "Fog of war preset (HARD) is calculated properly", "Labyrinth size", "Fog of war is fitting for the preset");
 
 	cout << "Tests pending:" << endl;
 
@@ -200,7 +207,7 @@ int main()
 	double *results = new double[entries.size()];
 	// Negative value means that the result should be lower that the desired value in order to pass; 
 	// Values > 1 mean that the functions isn't testing for percentage
-	double desired[] = { 0.9, -0.5, 0.9, 198};
+	double desired[] = { 0.9, -0.5, 0.9, 198, 33};
 	for (int i = 0; i < entries.size(); i++)
 	{
 		results[i] = tests.getPassingPercentageForTest(i, 1000);
