@@ -4,6 +4,7 @@
 #include <array>
 
 #include "ui.h"
+#include "utils.h"
 #include "renderer.h"
 
 class App
@@ -58,11 +59,11 @@ private:
 	int _menuFocus = 0;
 
 	int _mazeSize = 20;
-	int _fogPreset = 0;
+	enum fogPreset _fogPreset = NONE;
 	bool _sliderDragging = false;
 	Rectangle _sliderTrack{0, 0, 0, 0};
 	std::array<ui::Button, 5> _presetButtons;
-	std::array<ui::Button, 4> _fogButtons;
+	std::array<ui::Button, 5> _fogButtons;
 	ui::Button _sizeMinus{"-"};
 	ui::Button _sizePlus{"+"};
 	ui::Button _sizeStart{"START GAME", true};

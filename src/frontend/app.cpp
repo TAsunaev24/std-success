@@ -41,10 +41,11 @@ App::App()
 		_presetButtons[i] = ui::Button(std::to_string(size) + " x " + std::to_string(size));
 	}
 
-	_fogButtons[0] = ui::Button("EASY", true);
-	_fogButtons[1] = ui::Button("MEDIUM");
-	_fogButtons[2] = ui::Button("HARD");
-	_fogButtons[3] = ui::Button("VERY HARD");
+	_fogButtons[0] = ui::Button("NONE", true);
+	_fogButtons[1] = ui::Button("EASY");
+	_fogButtons[2] = ui::Button("MEDIUM");
+	_fogButtons[3] = ui::Button("HARD");
+	_fogButtons[4] = ui::Button("VERY HARD");
 }
 
 App::~App()
@@ -165,10 +166,10 @@ void App::layoutSizeSelect()
 	const float fogWidth = std::clamp((width - 80.0f - 3.0f * 12.0f) / 4.0f, 88.0f, 123.0f);
 	constexpr float fogHeight = 42.0f;
 	constexpr float fogGap = 12.0f;
-	const float fogTotalWidth = fogWidth * 4.0f + fogGap * 3.0f;
+	const float fogTotalWidth = fogWidth * 5.0f + fogGap * 3.0f;
 	const float fogY = height * 0.635f;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 		_fogButtons[i].rect = {centerX - fogTotalWidth * 0.5f + i * (fogWidth + fogGap),
 			fogY, fogWidth, fogHeight};
 
@@ -323,10 +324,10 @@ void App::updateSizeSelect()
 			_mazeSize = (i + 1) * 10;
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		if (_fogButtons[i].clicked())
-			_fogPreset = i;
+			_fogPreset = (enum fogPreset)i;
 		_fogButtons[i].primary = (_fogPreset == i);
 	}
 

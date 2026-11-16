@@ -35,26 +35,26 @@ coordinate applyDirection(coordinate current, enum generationDirection direction
 	return current;
 }
 
-int getFogRadius(int size, int preset)
+int getFogRadius(int size, enum fogPreset preset)
 {
 	switch (preset)
 	{
-		case 0:
-			return size * 3 / 4;
-		case 1:
+		case NONE:
+			return size*2-2;
+		case EASY:
+			return size*3/4;
+		case MEDIUM:
+			return size;
+		case HARD:
 			return size / 2;
-		case 2:
+		case VERY_HARD:
 			return size / 4;
-		case 3:
-			return size / 6;
-		default:
-			return size / 2;
 	}
 }
 
-int manhattanDistance(coordinate first, coordinate second)
+int manhattanDistance(coordinate a, coordinate b)
 {
-	return abs(first.x - second.x) + abs(first.y - second.y);
+	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
 enum generationDirection getDirection(coordinate loc, coordinate end)
