@@ -41,7 +41,7 @@ UnitTests::UnitTests(vector<UnitTestEntry> entries)
 
 void UnitTests::addTest(double (*checker)(int), int checkerArgument, string testName, string argumentDescription, string resultExplaination)
 {
-	UnitTestEntry entry = { checker, testName, checkerArgument, resultExplaination };
+	UnitTestEntry entry = { checker, testName, checkerArgument, argumentDescription, resultExplaination };
 	_entries.push_back(entry);
 }
 
@@ -93,25 +93,25 @@ string generateCSVTableForTest(vector<UnitTestEntry> entries, double* results, d
 
     for (size_t i = 0; i < entries.size(); i++)
     {
-        csv << i << ","; // #
+        csv << i + 1 << ","; // #
         csv << entries[i].name << ","; // Description
         csv << entries[i].argDescription << ": " << entries[i].arg << ","; // Test Data
-        csv << getSignForResult(passingValues[i]);
 
 		if (shouldPrintPercentage(results[i]))
 		{
+			csv << getSignForResult(passingValues[i]);
 			csv << abs(passingValues[i] * 100) << "%,"; // Expected
 			csv << abs(results[i] * 100) << "%,"; // Actual Result
 		}
 		else // for non-percentage values
 		{
-			csv << passingValues << ","; // Expected
+			csv << passingValues[i] << ","; // Expected
 			csv << results[i] << ","; // Actual Result
 		}
 
 		csv << entries[i].resultExplaination << ",";
 
-        if (results[i] > passingValues[i])
+        if (results[i] >= passingValues[i])
         {
             csv << "Passed,\n";
         }
@@ -174,12 +174,20 @@ double random_checker(int range)
 	return ((double)nonEmptyQuantity) / range;
 }
 
+double fogDistance_checker(int diff)
+{
+	coordinate start = { 0, 0 };
+	coordinate end = { diff - 1, diff - 1 };
+	return (double)manhattanDistance(start, end);
+}
+
 int main()
 {
 	UnitTests tests = UnitTests();
 	tests.addTest(labyrinth_checker, 30, "Generated labyrinth has a path to the end", "Labyrinth size", "% of total labyrinths generated with a way to get to the finish");
 	tests.addTest(labyrinth_wall_ratio_checker, 30, "Generated labyrinth does not have wall congestion", "Labyrinth size", "% of wall in relation to the total cell count");
 	tests.addTest(random_checker, 1000, "Randomizer function(getRandom()) returns nonrepeating values", "Range", "100% means every value generated is unique");
+	tests.addTest(fogDistance_checker, 100, "Fog of war distance is calculated properly", "Difference in height and width between two points", "Fog of war is displayed properly");
 
 	cout << "Tests pending:" << endl;
 
@@ -190,7 +198,9 @@ int main()
 	}
 
 	double *results = new double[entries.size()];
-	double desired[] = { 0.9, -0.5, 0.9 }; // Negative value means that the result should be lower that the desired value in order to pass
+	// Negative value means that the result should be lower that the desired value in order to pass; 
+	// Values > 1 mean that the functions isn't testing for percentage
+	double desired[] = { 0.9, -0.5, 0.9, 198};
 	for (int i = 0; i < entries.size(); i++)
 	{
 		results[i] = tests.getPassingPercentageForTest(i, 1000);
